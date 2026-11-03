@@ -1,112 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>音乐跳转</title>
-  <style>
-    body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; margin: 0; padding: 20px; }
-    .container { margin-top: 15%; }
-    h2 { font-weight: normal; }
-    button { display: block; width: 80%; max-width: 300px; margin: 15px auto; padding: 15px; border: none; border-radius: 25px; font-size: 16px; }
-    .qq { background: #34c759; color: #fff; }
-    .netease { background: #d93025; color: #fff; }
-    .web { background: #333; color: #fff; }
-    #loading { font-size: 20px; margin-bottom: 20px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFC 音乐</title>
+<style>
+  body { background: #121212; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
+  .card { background: #1e1e1e; padding: 30px; border-radius: 12px; max-width: 400px; margin: 50px auto; }
+  button { display: block; width: 100%; padding: 15px; margin: 15px 0; border: none; border-radius: 8px; font-size: 16px; }
+  .qq { background: #31c27c; color: #fff; }
+  .netease { background: #d33a31; color: #fff; }
+  .web { background: #333; color: #fff; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div id="loading">加载中...</div>
-    <div id="content" style="display:none;">
-      <h2 id="songName"></h2>
-      <button class="qq" id="btnQq">用 QQ音乐 播放</button>
-      <button class="netease" id="btnNetease">用 网易云 搜索</button>
-      <button class="web" id="btnWeb">网页试听</button>
-      <p style="color:#888; font-size:12px;">没装App就点网页试听</p>
-    </div>
+  <div class="card" id="content" style="display:none;">
+    <h2 id="songName"></h2>
+    <p style="color:#31c27c;">数据加载成功</p>
+    <button class="qq" id="btnQq">用 QQ音乐 打开</button>
+    <button class="netease" id="btnNetease">用 网易云 搜索</button>
+    <button class="web" id="btnWeb">网页试听</button>
+    <p style="font-size:12px; color:#888;">没装对应 App 就点网页试听</p>
   </div>
+  <div id="loading">加载中...</div>
 
-  <script>
-    const params = new URLSearchParams(location.search);
-    const songId = params.get("s");
-    let song;
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const songId = urlParams.get('s') || "1";
 
-    // 动态加载歌曲数据
-    fetch('./songs.js?v=' + Date.now())
-      .then(r => r.text())
-      .then(txt => {
-        const m = txt.match(/const SONGS = (\{[\s\S]*\});/);
-        if(!m) return;
-        const SONGS = new Function('return ' + m[1])();
-        song = SONGS[songId];
-        
-        if (!song) {
-          document.getElementById("loading").textContent = "歌曲不存在";
-          return;
-        }
-        
-        document.getElementById("songName").textContent = "🎵 " + song.name;
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("content").style.display = "block";
+  fetch('./songs.js?v=' + Date.now())
+    .then(r => r.text())
+    .then(txt => {
+      const m = txt.match(/const SONGS = (\{[\s\S]*\});/);
+      const SONGS = new Function('return ' + m[1])();
+      const song = SONGS[songId];
+      
+      if (!song) { document.getElementById("loading").textContent = "歌曲不存在"; return; }
+      
+      document.getElementById("songName").textContent = "🎵 " + song.name;
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("content").style.display = "block";
 
-        const ua = navigator.userAgent.toLowerCase();
-        const isIOS = /iphone|ipad|ipod/.test(ua);
-
-        // 安卓：尝试自动拉起
-        if (!isIOS) {
-          autoLaunchAndroid();
-        }
-      });
-
-    // 安卓自动分发逻辑（优先QQ音乐，其次网易云）
-    function autoLaunchAndroid() {
-      const t1 = Date.now();
-      let jumped = false;
-
-      // 1. 尝试跳QQ音乐
-      const tryQQ = () => {
-        if (jumped) return;
-        jumped = true;
-        window.location.href = song.qqScheme;
-      };
-
-      const checkQQ = setInterval(() => {
-        if (document.hidden) { clearInterval(checkQQ); return; }
-        if (Date.now() - t1 > 1500) {
-          clearInterval(checkQQ);
-          tryNetease(); // QQ音乐没装上，试网易云
-        }
-      }, 300);
-      tryQQ();
-
-      // 2. 尝试跳网易云
-      function tryNetease() {
-        if (!song.neteaseScheme) return;
-        const t2 = Date.now();
-        let j2 = false;
-        
-        const goNe = () => {
-          if (j2) return;
-          j2 = true;
-          window.location.href = song.neteaseScheme;
-        };
-        
-        const checkNE = setInterval(() => {
-          if (document.hidden) { clearInterval(checkNE); return; }
-          if (Date.now() - t2 > 1500) {
-            clearInterval(checkNE);
-            // 都没装，留在页面显示按钮
-          }
-        }, 300);
-        goNe();
-      }
-    }
-
-    // 手动按钮点击事件（使用官方网页链接兜底，确保能播）
-    document.getElementById("btnQq").onclick = () => location.href = song.qqScheme;
-    document.getElementById("btnNetease").onclick = () => location.href = song.neteaseScheme;
-    document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
-  </script>
+      // 绑定按钮：直接跳官方网页（官方网页会自动拉起App）
+      document.getElementById("btnQq").onclick = () => location.href = song.qqWeb;
+      document.getElementById("btnNetease").onclick = () => location.href = song.neteaseWeb;
+      document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
+    });
+</script>
 </body>
 </html>
