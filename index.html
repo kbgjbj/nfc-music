@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NFC 音乐分发</title>
 <style>
-  body { background: #121212; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
+  body { background: #121212; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
   .card { background: #1e1e1e; padding: 30px; border-radius: 12px; max-width: 400px; margin: 50px auto; }
   button { display: block; width: 100%; padding: 15px; margin: 15px 0; border: none; border-radius: 8px; font-size: 16px; }
   .qq { background: #31c27c; color: #fff; }
@@ -41,58 +41,54 @@
       document.getElementById("loading").style.display = "none";
       document.getElementById("content").style.display = "block";
 
-      const ua = navigator.userAgent.toLowerCase();
-      const isIOS = /iphone|ipad|ipod/.test(ua);
-
-      // 安卓：尝试自动拉起（优先QQ，其次网易云）
-      if (!isIOS) {
-        autoLaunchAndroid();
-      }
-
-      // 按钮兜底事件
-      document.getElementById("btnQq").onclick = () => location.href = song.qqScheme;
-      document.getElementById("btnNetease").onclick = () => location.href = song.neteaseScheme;
+      // 绑定按钮：跳官方网页（官方网页会自动拉起App）
+      document.getElementById("btnQq").onclick = () => location.href = song.qqWeb;
+      document.getElementById("btnNetease").onclick = () => location.href = song.neteaseWeb;
       document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
+
+      // 安卓自动分发逻辑（优先QQ，其次网易云，最后留页面）
+      const ua = navigator.userAgent.toLowerCase();
+      const isAndroid = /android/.test(ua);
+      
+      if (isAndroid) {
+        autoLaunchAndroid(song);
+      }
     });
 
-  // 安卓自动分发与检测逻辑
-  function autoLaunchAndroid() {
+  function autoLaunchAndroid(song) {
     const t1 = Date.now();
     let jumped = false;
 
-    // 1. 尝试拉起 QQ音乐
     const tryQQ = () => {
       if (jumped) return;
       jumped = true;
-      window.location.href = song.qqScheme;
+      window.location.href = song.qqWeb; // 使用官方网页链接兜底拉起
     };
 
     const checkQQ = setInterval(() => {
       if (document.hidden) { clearInterval(checkQQ); return; }
       if (Date.now() - t1 > 1500) {
         clearInterval(checkQQ);
-        tryNetease(); // QQ音乐没装上，试网易云
+        tryNetease();
       }
     }, 300);
     tryQQ();
 
-    // 2. 尝试拉起网易云
     function tryNetease() {
-      if (!song.neteaseScheme) return;
+      if (!song.neteaseWeb) return;
       const t2 = Date.now();
       let j2 = false;
       
       const goNe = () => {
         if (j2) return;
         j2 = true;
-        window.location.href = song.neteaseScheme;
+        window.location.href = song.neteaseWeb;
       };
       
       const checkNE = setInterval(() => {
         if (document.hidden) { clearInterval(checkNE); return; }
         if (Date.now() - t2 > 1500) {
           clearInterval(checkNE);
-          // 都没装，留在页面显示按钮
         }
       }, 300);
       goNe();
