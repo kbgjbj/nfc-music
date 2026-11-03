@@ -12,7 +12,7 @@
   #btnNetease { background: #d33a31; }
   #btnQishi { background: #000000; }
   #btnKuGou { background: #00a0e9; }
-  #btnKuWo { background: #ff6600; }
+  #btnKugouYouth { background: #ff6600; }
   #btnWeb { background: #666; }
 </style>
 </head>
@@ -24,7 +24,7 @@
     <a id="btnNetease" class="btn">网易云音乐</a>
     <a id="btnQishi" class="btn">汽水音乐</a>
     <a id="btnKuGou" class="btn">酷狗音乐</a>
-    <a id="btnKuWo" class="btn">酷我音乐</a>
+    <a id="btnKugouYouth" class="btn">酷狗概念版</a>
     <a id="btnWeb" class="btn">网页在线播放(QQ)</a>
   </div>
 
@@ -41,15 +41,13 @@
     document.getElementById("loading").style.display = "none";
     document.getElementById("content").style.display = "block";
 
-    // 绑定手动按钮
     document.getElementById("btnQq").onclick = () => location.href = song.qqScheme || song.qqWeb;
-    document.getElementById("btnNetease").onclick = () => location.href = song.neteaseScheme || song.neteaseWeb;
+    document.getElementById("btnNetease").onclick = () => location.href = song.neteaseScheme;
     document.getElementById("btnQishi").onclick = () => location.href = song.qishiScheme;
     document.getElementById("btnKuGou").onclick = () => location.href = song.kugouScheme;
-    document.getElementById("btnKuWo").onclick = () => location.href = song.kuwoScheme;
-    document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb; // 保底仅保留QQ网页
+    document.getElementById("btnKugouYouth").onclick = () => location.href = song.kugouyouthScheme;
+    document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
 
-    // 安卓自动分发逻辑
     const ua = navigator.userAgent.toLowerCase();
     if (/android/.test(ua)) {
       autoLaunchAndroid(song);
@@ -60,7 +58,6 @@
     const t1 = Date.now();
     let jumped = false;
 
-    // 1. 尝试拉起QQ音乐
     const tryQQ = () => {
       if (jumped) return;
       jumped = true;
@@ -71,12 +68,11 @@
       if (document.hidden) { clearInterval(checkQQ); return; }
       if (Date.now() - t1 > 1500) {
         clearInterval(checkQQ);
-        tryNetease(); // QQ失败，试网易云
+        tryNetease();
       }
     }, 300);
     tryQQ();
 
-    // 2. 尝试拉起网易云
     function tryNetease() {
       if (!song.neteaseScheme) return;
       const t2 = Date.now();
@@ -85,20 +81,19 @@
       const goNe = () => {
         if (j2) return;
         j2 = true;
-        location.href = song.neteaseScheme || song.neteaseWeb;
+        location.href = song.neteaseScheme;
       };
       
       const checkNE = setInterval(() => {
         if (document.hidden) { clearInterval(checkNE); return; }
         if (Date.now() - t2 > 1500) {
           clearInterval(checkNE);
-          tryQishi(); // 网易云失败，试汽水
+          tryQishi();
         }
       }, 300);
       goNe();
     }
 
-    // 3. 尝试拉起汽水音乐
     function tryQishi() {
       if (!song.qishiScheme) return;
       const t3 = Date.now();
@@ -114,13 +109,12 @@
         if (document.hidden) { clearInterval(checkQi); return; }
         if (Date.now() - t3 > 1500) {
           clearInterval(checkQi);
-          tryKuGou(); // 汽水失败，试酷狗
+          tryKuGou();
         }
       }, 300);
       goQi();
     }
 
-    // 4. 尝试拉起酷狗音乐
     function tryKuGou() {
       if (!song.kugouScheme) return;
       const t4 = Date.now();
@@ -136,32 +130,30 @@
         if (document.hidden) { clearInterval(checkKg); return; }
         if (Date.now() - t4 > 1500) {
           clearInterval(checkKg);
-          tryKuWo(); // 酷狗失败，试酷我
+          tryKugouYouth();
         }
       }, 300);
       goKg();
     }
 
-    // 5. 尝试拉起酷我音乐
-    function tryKuWo() {
-      if (!song.kuwoScheme) return;
+    function tryKugouYouth() {
+      if (!song.kugouyouthScheme) return;
       const t5 = Date.now();
       let j5 = false;
       
-      const goKw = () => {
+      const goKy = () => {
         if (j5) return;
         j5 = true;
-        location.href = song.kuwoScheme;
+        location.href = song.kugouyouthScheme;
       };
       
-      const checkKw = setInterval(() => {
-        if (document.hidden) { clearInterval(checkKw); return; }
+      const checkKy = setInterval(() => {
+        if (document.hidden) { clearInterval(checkKy); return; }
         if (Date.now() - t5 > 1500) {
-          clearInterval(checkKw);
-          // 全部失败，留在页面显示手动按钮
+          clearInterval(checkKy);
         }
       }, 300);
-      goKw();
+      goKy();
     }
   }
 </script>
