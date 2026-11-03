@@ -5,86 +5,77 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NFC 音乐分发</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; color: #fff; overflow-x: hidden; }
-
-  #loading { display: flex; align-items: center; justify-content: center; height: 100vh; font-size: 15px; color: rgba(255,255,255,0.6); }
-
-  #content { display: none; padding: 40px 20px 30px; max-width: 420px; margin: 0 auto; }
-
-  /* 歌名 */
-  #songName { font-size: 18px; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; }
-  #songSub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 36px; }
-
-  /* ===== 安卓界面 ===== */
-  #androidView { text-align: center; }
-  #androidView .playBtn {
-    width: 72px; height: 72px; border-radius: 50%;
-    background: linear-gradient(135deg, #12b7f5, #0a8bc0);
-    border: none; cursor: pointer; margin: 0 auto 20px;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 8px 24px rgba(18,183,245,0.35);
-    transition: transform 0.15s, box-shadow 0.15s;
-    -webkit-tap-highlight-color: transparent;
+  body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    text-align: center; 
+    padding: 20px; 
+    background: #0f172a; 
+    color: #fff;
+    margin: 0;
   }
-  #androidView .playBtn:active { transform: scale(0.93); box-shadow: 0 4px 12px rgba(18,183,245,0.25); }
-  #androidView .playBtn svg { width: 28px; height: 28px; fill: #fff; margin-left: 3px; }
-  #androidView .hint { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 28px; }
-  #androidView .webLink { font-size: 13px; color: rgba(255,255,255,0.5); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 2px; }
-
-  /* ===== iPhone界面 ===== */
-  #iphoneView { display: none; }
-  #iphoneView .tip { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 24px; }
-  .btn { display: flex; align-items: center; width: 100%; margin: 8px 0; padding: 14px 18px; border-radius: 12px; color: #fff; text-decoration: none; font-size: 15px; font-weight: 500; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
-  .btn:active { transform: scale(0.98); }
-  .btn .icon { width: 22px; height: 22px; margin-right: 12px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-  #btnQq { background: rgba(18,183,245,0.15); border: 1px solid rgba(18,183,245,0.3); }
-  #btnNetease { background: rgba(211,58,49,0.15); border: 1px solid rgba(211,58,49,0.3); }
-  #btnQishi { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); }
-  #btnKuGou { background: rgba(0,160,233,0.15); border: 1px solid rgba(0,160,233,0.3); }
-  #btnKugouYouth { background: rgba(255,102,0,0.15); border: 1px solid rgba(255,102,0,0.3); }
-  #btnWeb { background: rgba(102,102,102,0.2); border: 1px solid rgba(102,102,102,0.35); margin-top: 16px; justify-content: center; }
-
-  /* 成功跳转遮罩 */
-  #redirecting { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,52,96,0.95); z-index: 100; align-items: center; justify-content: center; flex-direction: column; }
-  #redirecting .spin { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #12b7f5; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #redirecting p { font-size: 14px; color: rgba(255,255,255,0.7); }
+  /* 默认全部隐藏，由JS控制显示 */
+  #androidView, #iphoneView { display: none; }
+  
+  /* 安卓视图样式 */
+  .play-btn { 
+    width: 80px; height: 80px; 
+    background: #3b82f6; 
+    border-radius: 50%; 
+    margin: 40px auto 20px; 
+    display: flex; align-items: center; justify-content: center; 
+    box-shadow: 0 0 20px rgba(59,130,246,0.5);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .play-btn:active { transform: scale(0.95); }
+  .play-btn svg { width: 30px; height: 30px; fill: #fff; margin-left: 5px; }
+  .tip { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
+  #webLink { color: #94a3b8; text-decoration: none; font-size: 14px; display: block; margin-top: 40px; }
+  
+  /* iPhone视图样式 */
+  .title { font-size: 18px; margin-bottom: 30px; font-weight: 500; }
+  .btn { 
+    display: block; 
+    width: 90%; 
+    margin: 12px auto; 
+    padding: 16px; 
+    border-radius: 12px; 
+    color: #fff; 
+    text-decoration: none; 
+    font-size: 16px; 
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    text-align: left;
+    backdrop-filter: blur(10px);
+  }
+  .btn-wrap { display: flex; align-items: center; }
+  .btn-icon { margin-right: 12px; font-size: 20px; }
+  #btnWebIos { background: rgba(0,0,0,0.3); text-align: center; }
 </style>
 </head>
 <body>
+  <div id="loading">加载中...</div>
+  
+  <!-- 安卓专属视图 -->
+  <div id="androidView">
+    <div class="tip">正在匹配最佳播放源...</div>
+    <div class="play-btn" onclick="retryLaunch()">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+    <div class="tip">自动匹配中，未跳转可点击上方按钮重试</div>
+    <a id="webLink" href="#">网页在线试听 →</a>
+  </div>
 
-<div id="loading">加载中...</div>
-
-<!-- 安卓视图 -->
-<div id="androidView">
-  <div id="songName"></div>
-  <div id="songSub">正在匹配最佳播放源...</div>
-  <button class="playBtn" id="playBtn" onclick="retryLaunch()">
-    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-  </button>
-  <div class="hint">自动匹配中，未跳转可点击上方按钮重试</div>
-  <a class="webLink" href="#" id="webLink">网页在线试听 →</a>
-</div>
-
-<!-- iPhone视图 -->
-<div id="iphoneView">
-  <div id="songName2"></div>
-  <div id="songSub2" style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:20px;"></div>
-  <div class="tip">请选择音乐平台</div>
-  <a id="btnQq" class="btn"><span class="icon">🎵</span>QQ音乐</a>
-  <a id="btnNetease" class="btn"><span class="icon">☁️</span>网易云音乐</a>
-  <a id="btnQishi" class="btn"><span class="icon">🥤</span>汽水音乐</a>
-  <a id="btnKuGou" class="btn"><span class="icon">🐶</span>酷狗音乐</a>
-  <a id="btnKugouYouth" class="btn"><span class="icon">🎧</span>酷狗概念版</a>
-  <a id="btnWeb" class="btn">🌐 网页在线播放(QQ)</a>
-</div>
-
-<!-- 跳转中遮罩 -->
-<div id="redirecting">
-  <div class="spin"></div>
-  <p>正在跳转...</p>
-</div>
+  <!-- iPhone专属视图 -->
+  <div id="iphoneView">
+    <div class="title">请选择音乐平台</div>
+    <a id="btnQq" class="btn"><span class="btn-wrap"><span class="btn-icon">🎵</span> QQ音乐</span></a>
+    <a id="btnNetease" class="btn"><span class="btn-wrap"><span class="btn-icon">☁️</span> 网易云音乐</span></a>
+    <a id="btnQishi" class="btn"><span class="btn-wrap"><span class="btn-icon">🥤</span> 汽水音乐</span></a>
+    <a id="btnKuGou" class="btn"><span class="btn-wrap"><span class="btn-icon">🐶</span> 酷狗音乐</span></a>
+    <a id="btnKugouYouth" class="btn"><span class="btn-wrap"><span class="btn-icon">🎧</span> 酷狗概念版</span></a>
+    <a id="btnWebIos" class="btn">🌐 网页在线播放(QQ)</a>
+  </div>
 
 <script src="songs.js"></script>
 <script>
@@ -92,45 +83,33 @@
   const songId = params.get('s');
   const song = SONGS[songId];
   const ua = navigator.userAgent.toLowerCase();
-  const isIOS = /iphone|ipad|ipod/.test(ua);
   const isAndroid = /android/.test(ua);
 
-  if (!song) {
-    document.getElementById("loading").textContent = "歌曲不存在";
+  if (!song) { 
+    document.getElementById("loading").textContent = "歌曲不存在"; 
   } else {
     document.getElementById("loading").style.display = "none";
 
-    if (isIOS) {
-      // ===== iPhone：显示选择列表 =====
+    if (isAndroid) {
+      // 安卓：显示播放视图，跑自动队列
+      document.getElementById("androidView").style.display = "block";
+      document.getElementById("webLink").onclick = () => location.href = song.qqWeb;
+      autoLaunchAndroid(song);
+    } else {
+      // iPhone及其他：只显示选择平台视图
       document.getElementById("iphoneView").style.display = "block";
-      document.getElementById("songName2").textContent = "🎵 " + song.name;
-      document.getElementById("songSub2").textContent = song.name;
-
+      
       document.getElementById("btnQq").onclick = () => location.href = song.qqScheme || song.qqWeb;
       document.getElementById("btnNetease").onclick = () => location.href = song.neteaseScheme;
       document.getElementById("btnQishi").onclick = () => location.href = song.qishiScheme;
       document.getElementById("btnKuGou").onclick = () => location.href = song.kugouScheme;
       document.getElementById("btnKugouYouth").onclick = () => location.href = song.kugouyouthScheme;
-      document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
-
-    } else if (isAndroid) {
-      // ===== 安卓：简洁视图 + 自动队列 =====
-      document.getElementById("androidView").style.display = "block";
-      document.getElementById("songName").textContent = "🎵 " + song.name;
-      document.getElementById("webLink").onclick = () => location.href = song.qqWeb;
-
-      autoLaunchAndroid(song);
-    } else {
-      // 其他设备 fallback 到 iPhone 视图
-      document.getElementById("iphoneView").style.display = "block";
-      document.getElementById("songName2").textContent = "🎵 " + song.name;
+      document.getElementById("btnWebIos").onclick = () => location.href = song.qqWeb;
     }
   }
 
   // 安卓手动重试
   function retryLaunch() {
-    document.getElementById("redirecting").style.display = "flex";
-    setTimeout(() => { document.getElementById("redirecting").style.display = "none"; }, 2000);
     autoLaunchAndroid(song);
   }
 
