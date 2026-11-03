@@ -41,12 +41,12 @@
       document.getElementById("loading").style.display = "none";
       document.getElementById("content").style.display = "block";
 
-      // 绑定手动按钮：跳官方网页（官方网页会自动拉起App）
-      document.getElementById("btnQq").onclick = () => location.href = song.qqWeb;
-      document.getElementById("btnNetease").onclick = () => location.href = song.neteaseWeb;
+      // 手动按钮绑定（优先原生协议，失败则跳网页）
+      document.getElementById("btnQq").onclick = () => location.href = song.qqScheme || song.qqWeb;
+      document.getElementById("btnNetease").onclick = () => location.href = song.neteaseScheme || song.neteaseWeb;
       document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
 
-      // 安卓自动分发逻辑（优先QQ，其次网易云，最后留页面）
+      // 安卓自动分发逻辑（优先QQ原生协议，其次网易云原生协议，最后留页面）
       const ua = navigator.userAgent.toLowerCase();
       const isAndroid = /android/.test(ua);
       
@@ -59,11 +59,11 @@
     const t1 = Date.now();
     let jumped = false;
 
-    // 1. 尝试拉起QQ音乐
+    // 1. 尝试拉起QQ音乐并播放
     const tryQQ = () => {
       if (jumped) return;
       jumped = true;
-      window.location.href = song.qqWeb; // 使用官方网页链接兜底拉起
+      location.href = song.qqScheme || song.qqWeb; 
     };
 
     const checkQQ = setInterval(() => {
@@ -75,16 +75,16 @@
     }, 300);
     tryQQ();
 
-    // 2. 尝试拉起网易云
+    // 2. 尝试拉起网易云并播放
     function tryNetease() {
-      if (!song.neteaseWeb) return;
+      if (!song.neteaseScheme) return;
       const t2 = Date.now();
       let j2 = false;
       
       const goNe = () => {
         if (j2) return;
         j2 = true;
-        window.location.href = song.neteaseWeb;
+        location.href = song.neteaseScheme;
       };
       
       const checkNE = setInterval(() => {
