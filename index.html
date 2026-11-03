@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打开音乐</title>
+  <style>
+    body { font-family: -apple-system, "PingFang SC", sans-serif; 
+           text-align: center; padding: 15vw 6vw; background: #0f0f0f; color: #fff; }
+    .card { background: #1c1c1e; border-radius: 20px; padding: 32px 24px; }
+    .title { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+    .sub { color: #999; font-size: 14px; margin-bottom: 28px; }
+    .btn { display: block; margin: 12px auto; padding: 15px; border-radius: 14px;
+           text-decoration: none; font-size: 16px; font-weight: 500; max-width: 280px; }
+    .qq { background: #31c27c; color: #fff; }
+    .netease { background: #e72d2d; color: #fff; }
+    .web { background: #3a3a3c; color: #fff; }
+    .tip { margin-top: 18px; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title" id="songName">加载中…</div>
+    <div class="sub">选择打开方式</div>
+    <a class="btn qq" id="btnQq">用 QQ音乐 打开</a>
+    <a class="btn netease" id="btnNetease">用 网易云 搜索</a>
+    <a class="btn web" id="btnWeb">网页试听</a>
+    <div class="tip">没装 App 就点网页试听</div>
+  </div>
+
+  <script src="songs.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get("s");
+    const song = SONGS[id];
+
+    if (!song) {
+      document.getElementById("songName").textContent = "歌曲不存在";
+    } else {
+      document.getElementById("songName").textContent = "🎵 " + song.name;
+      document.getElementById("btnQq").href = song.qqScheme;
+      document.getElementById("btnNetease").href =
+        "orpheus://search/" + encodeURIComponent(song.neteaseSearch);
+      document.getElementById("btnWeb").href = song.qqWeb;
+
+      const ua = navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(ua);
+
+      // 安卓：尝试自动拉起 QQ音乐，2 秒后兜底网页
+      if (!isIOS) {
+        location.href = song.qqScheme;
+        setTimeout(() => { location.href = song.qqWeb; }, 2000);
+      }
+      // iPhone：不自动跳，等用户点按钮（系统限制）
+    }
+  </script>
+</body>
+</html>
