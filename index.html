@@ -41,7 +41,7 @@
       document.getElementById("loading").style.display = "none";
       document.getElementById("content").style.display = "block";
 
-      // 绑定按钮：跳官方网页（官方网页会自动拉起App）
+      // 绑定手动按钮：跳官方网页（官方网页会自动拉起App）
       document.getElementById("btnQq").onclick = () => location.href = song.qqWeb;
       document.getElementById("btnNetease").onclick = () => location.href = song.neteaseWeb;
       document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
@@ -59,6 +59,7 @@
     const t1 = Date.now();
     let jumped = false;
 
+    // 1. 尝试拉起QQ音乐
     const tryQQ = () => {
       if (jumped) return;
       jumped = true;
@@ -69,11 +70,12 @@
       if (document.hidden) { clearInterval(checkQQ); return; }
       if (Date.now() - t1 > 1500) {
         clearInterval(checkQQ);
-        tryNetease();
+        tryNetease(); // QQ音乐没装上，试网易云
       }
     }, 300);
     tryQQ();
 
+    // 2. 尝试拉起网易云
     function tryNetease() {
       if (!song.neteaseWeb) return;
       const t2 = Date.now();
@@ -89,6 +91,7 @@
         if (document.hidden) { clearInterval(checkNE); return; }
         if (Date.now() - t2 > 1500) {
           clearInterval(checkNE);
+          // 都没装，留在页面显示按钮
         }
       }, 300);
       goNe();
