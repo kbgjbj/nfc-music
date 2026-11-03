@@ -2,83 +2,69 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>正在打开音乐...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>音乐跳转</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0f0f0f; color: #fff;
-      font-family: -apple-system, "PingFang SC", sans-serif;
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-    }
-    .wrap { text-align: center; max-width: 340px; width: 100%; }
-    .loading { font-size: 15px; color: #999; margin-bottom: 24px; }
-    .card { display: none; background: #1c1c1e; border-radius: 20px; padding: 32px 22px; }
-    .title { font-size: 21px; font-weight: 700; margin-bottom: 4px; }
-    .sub { color: #999; font-size: 13px; margin-bottom: 26px; }
-    .btn {
-      display: block; width: 100%; padding: 15px; margin: 10px 0;
-      border: none; border-radius: 13px; font-size: 16px; font-weight: 600;
-      cursor: pointer; text-decoration: none; color: #fff;
-    }
-    .qq { background: #31c27c; }
-    .netease { background: #e72d2d; }
-    .web { background: #3a3a3c; }
-    .hint { font-size: 12px; color: #666; margin-top: 16px; line-height: 1.6; }
+    body { font-family: sans-serif; background: #121212; color: #fff; text-align: center; margin: 0; padding: 20px; }
+    .container { margin-top: 15%; }
+    h2 { font-weight: normal; }
+    button { display: block; width: 80%; max-width: 300px; margin: 15px auto; padding: 15px; border: none; border-radius: 25px; font-size: 16px; }
+    .qq { background: #34c759; color: #fff; }
+    .netease { background: #d93025; color: #fff; }
+    .web { background: #333; color: #fff; }
+    #loading { font-size: 20px; margin-bottom: 20px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="loading" id="loading">🎵 正在为你打开音乐...</div>
-
-    <div class="card" id="card">
-      <div class="title" id="songName"></div>
-      <div class="sub">选择播放方式</div>
-      <a class="btn qq" id="btnQq">用 QQ音乐 打开</a>
-      <a class="btn netease" id="btnNetease">用 网易云 打开</a>
-      <a class="btn web" id="btnWeb">网页试听</a>
-      <div class="hint">iPhone 需点一下按钮才能跳转</div>
+  <div class="container">
+    <div id="loading">加载中...</div>
+    <div id="content" style="display:none;">
+      <h2 id="songName"></h2>
+      <button class="qq" id="btnQq">用 QQ音乐 播放</button>
+      <button class="netease" id="btnNetease">用 网易云 搜索</button>
+      <button class="web" id="btnWeb">网页试听</button>
+      <p style="color:#888; font-size:12px;">没装App就点网页试听</p>
     </div>
   </div>
 
   <script>
-    let song = null;
-    const id = new URLSearchParams(location.search).get("s");
+    const params = new URLSearchParams(location.search);
+    const songId = params.get("s");
+    let song;
 
-    // 读取歌曲数据
+    // 动态加载歌曲数据
     fetch('./songs.js?v=' + Date.now())
       .then(r => r.text())
       .then(txt => {
         const m = txt.match(/const SONGS = (\{[\s\S]*\});/);
+        if(!m) return;
         const SONGS = new Function('return ' + m[1])();
-        song = SONGS[id];
+        song = SONGS[songId];
+        
         if (!song) {
-          document.getElementById("loading").textContent = "歌曲不存在，请检查 ?s= 参数";
+          document.getElementById("loading").textContent = "歌曲不存在";
           return;
         }
+        
         document.getElementById("songName").textContent = "🎵 " + song.name;
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("content").style.display = "block";
 
         const ua = navigator.userAgent.toLowerCase();
         const isIOS = /iphone|ipad|ipod/.test(ua);
 
-        if (isIOS) {
-          // iPhone：显示按钮，等用户点
-          document.getElementById("loading").style.display = "none";
-          document.getElementById("card").style.display = "block";
-        } else {
-          // 安卓：尝试自动拉起
+        // 安卓：尝试自动拉起
+        if (!isIOS) {
           autoLaunchAndroid();
         }
       });
 
-    // 安卓自动分发逻辑
+    // 安卓自动分发逻辑（优先QQ音乐，其次网易云）
     function autoLaunchAndroid() {
-      // 1. 优先试 QQ音乐
       const t1 = Date.now();
-      const hidden = () => document.hidden || document.webkitHidden;
       let jumped = false;
 
+      // 1. 尝试跳QQ音乐
       const tryQQ = () => {
         if (jumped) return;
         jumped = true;
@@ -86,45 +72,40 @@
       };
 
       const checkQQ = setInterval(() => {
-        if (hidden()) { clearInterval(checkQQ); return; }
+        if (document.hidden) { clearInterval(checkQQ); return; }
         if (Date.now() - t1 > 1500) {
           clearInterval(checkQQ);
-          // QQ音乐没装上，试网易云
-          tryNetease();
+          tryNetease(); // QQ音乐没装上，试网易云
         }
       }, 300);
-
       tryQQ();
 
+      // 2. 尝试跳网易云
       function tryNetease() {
-        if (!song.neteaseScheme) return showCard();
+        if (!song.neteaseScheme) return;
         const t2 = Date.now();
         let j2 = false;
-        const go = () => {
+        
+        const goNe = () => {
           if (j2) return;
           j2 = true;
           window.location.href = song.neteaseScheme;
         };
+        
         const checkNE = setInterval(() => {
           if (document.hidden) { clearInterval(checkNE); return; }
           if (Date.now() - t2 > 1500) {
             clearInterval(checkNE);
-            showCard(); // 都没装，留页面
+            // 都没装，留在页面显示按钮
           }
         }, 300);
-        go();
+        goNe();
       }
     }
 
-    // 兜底：显示手动按钮
-    function showCard() {
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("card").style.display = "block";
-    }
-
-    // 按钮事件
-    document.getElementById("btnQq").onclick = () => location.href = song.qqWeb;
-    document.getElementById("btnNetease").onclick = () => location.href = song.neteaseWeb;
+    // 手动按钮点击事件（使用官方网页链接兜底，确保能播）
+    document.getElementById("btnQq").onclick = () => location.href = song.qqScheme;
+    document.getElementById("btnNetease").onclick = () => location.href = song.neteaseScheme;
     document.getElementById("btnWeb").onclick = () => location.href = song.qqWeb;
   </script>
 </body>
