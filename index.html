@@ -5,76 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NFC 音乐分发</title>
 <style>
-  body { 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-    text-align: center; 
-    padding: 20px; 
-    background: #0f172a; 
-    color: #fff;
-    margin: 0;
-  }
-  /* 默认全部隐藏，由JS控制显示 */
-  #androidView, #iphoneView { display: none; }
+  body { font-family: sans-serif; text-align: center; padding: 20px; background: #0f1320; color: #fff; margin: 0; }
+  #loading { margin-top: 50px; font-size: 16px; color: #aaa; }
+  
+  /* 视图容器默认隐藏 */
+  .view-container { display: none; }
   
   /* 安卓视图样式 */
+  #androidView { margin-top: 30px; }
   .play-btn { 
-    width: 80px; height: 80px; 
-    background: #3b82f6; 
-    border-radius: 50%; 
-    margin: 40px auto 20px; 
-    display: flex; align-items: center; justify-content: center; 
-    box-shadow: 0 0 20px rgba(59,130,246,0.5);
-    cursor: pointer;
-    transition: transform 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    width: 80px; height: 80px; margin: 20px auto; 
+    background: #2b95ff; border-radius: 50%; 
+    box-shadow: 0 0 20px rgba(43,149,255,0.4);
+    font-size: 30px; color: #fff; text-decoration: none;
   }
-  .play-btn:active { transform: scale(0.95); }
-  .play-btn svg { width: 30px; height: 30px; fill: #fff; margin-left: 5px; }
-  .tip { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
-  #webLink { color: #94a3b8; text-decoration: none; font-size: 14px; display: block; margin-top: 40px; }
+  .tip-text { color: #888; font-size: 13px; margin-bottom: 30px; }
+  #webLink { display: inline-block; color: #2b95ff; text-decoration: none; font-size: 14px; margin-top: 10px; }
   
   /* iPhone视图样式 */
-  .title { font-size: 18px; margin-bottom: 30px; font-weight: 500; }
+  #iphoneView { margin-top: 20px; }
+  #iphoneView h2 { margin-bottom: 25px; font-size: 18px; font-weight: normal; }
   .btn { 
-    display: block; 
-    width: 90%; 
-    margin: 12px auto; 
-    padding: 16px; 
-    border-radius: 12px; 
-    color: #fff; 
-    text-decoration: none; 
-    font-size: 16px; 
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    text-align: left;
-    backdrop-filter: blur(10px);
+    display: flex; align-items: center;
+    width: 85%; margin: 12px auto; padding: 14px 20px; 
+    border-radius: 12px; color: #fff; text-decoration: none; font-size: 16px; 
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px); text-align: left;
   }
-  .btn-wrap { display: flex; align-items: center; }
   .btn-icon { margin-right: 12px; font-size: 20px; }
-  #btnWebIos { background: rgba(0,0,0,0.3); text-align: center; }
+  #btnQq { border-left: 3px solid #12b7f5; }
+  #btnNetease { border-left: 3px solid #d33a31; }
+  #btnQishi { border-left: 3px solid #ff0055; }
+  #btnKuGou { border-left: 3px solid #00a0e9; }
+  #btnKugouYouth { border-left: 3px solid #ff6600; }
+  #btnWebIos { background: rgba(0,0,0,0.2); border: none; justify-content: center; margin-top: 25px;}
 </style>
 </head>
 <body>
   <div id="loading">加载中...</div>
   
   <!-- 安卓专属视图 -->
-  <div id="androidView">
-    <div class="tip">正在匹配最佳播放源...</div>
-    <div class="play-btn" onclick="retryLaunch()">
-      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-    </div>
-    <div class="tip">自动匹配中，未跳转可点击上方按钮重试</div>
-    <a id="webLink" href="#">网页在线试听 →</a>
+  <div id="androidView" class="view-container">
+    <div>正在匹配最佳播放源...</div>
+    <a href="javascript:retryLaunch();" class="play-btn">▶</a>
+    <div class="tip-text">自动匹配中，未跳转可点击上方按钮重试</div>
+    <a href="#" id="webLink">网页在线试听 →</a>
   </div>
 
   <!-- iPhone专属视图 -->
-  <div id="iphoneView">
-    <div class="title">请选择音乐平台</div>
-    <a id="btnQq" class="btn"><span class="btn-wrap"><span class="btn-icon">🎵</span> QQ音乐</span></a>
-    <a id="btnNetease" class="btn"><span class="btn-wrap"><span class="btn-icon">☁️</span> 网易云音乐</span></a>
-    <a id="btnQishi" class="btn"><span class="btn-wrap"><span class="btn-icon">🥤</span> 汽水音乐</span></a>
-    <a id="btnKuGou" class="btn"><span class="btn-wrap"><span class="btn-icon">🐶</span> 酷狗音乐</span></a>
-    <a id="btnKugouYouth" class="btn"><span class="btn-wrap"><span class="btn-icon">🎧</span> 酷狗概念版</span></a>
-    <a id="btnWebIos" class="btn">🌐 网页在线播放(QQ)</a>
+  <div id="iphoneView" class="view-container">
+    <h2>请选择音乐平台</h2>
+    <a id="btnQq" class="btn"><span class="btn-icon">🎵</span> QQ音乐</a>
+    <a id="btnNetease" class="btn"><span class="btn-icon">☁️</span> 网易云音乐</a>
+    <a id="btnQishi" class="btn"><span class="btn-icon">🥤</span> 汽水音乐</a>
+    <a id="btnKuGou" class="btn"><span class="btn-icon">🐶</span> 酷狗音乐</a>
+    <a id="btnKugouYouth" class="btn"><span class="btn-icon">🎧</span> 酷狗概念版</a>
+    <a id="btnWebIos" class="btn"><span class="btn-icon">🌐</span> 网页在线播放(QQ)</a>
   </div>
 
 <script src="songs.js"></script>
@@ -91,12 +78,12 @@
     document.getElementById("loading").style.display = "none";
 
     if (isAndroid) {
-      // 安卓：显示播放视图，跑自动队列
+      // 安卓：只显示安卓视图，跑自动队列
       document.getElementById("androidView").style.display = "block";
       document.getElementById("webLink").onclick = () => location.href = song.qqWeb;
       autoLaunchAndroid(song);
     } else {
-      // iPhone及其他：只显示选择平台视图
+      // iPhone：只显示iPhone视图，纯手动点
       document.getElementById("iphoneView").style.display = "block";
       
       document.getElementById("btnQq").onclick = () => location.href = song.qqScheme || song.qqWeb;
