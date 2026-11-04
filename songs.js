@@ -17,7 +17,7 @@ const SONGS = {
     qishiScheme: "luna://luna.com/playing?track_id=7254748996823484417",
     kugouScheme: "kugou://start.weixin?%7B%22cmd%22%3A303%2C%22jsonStr%22%3A%7B%22title%22%3A%22%E8%8B%8F%E8%BF%90%E8%8D%A0%20-%20%E5%9C%86%22%2C%22url%22%3A%22https%3A%2F%2Ft1.kugou.com%2FKL0bc4G7V2%22%7D%7D",
     kugouyouthScheme: "kugouyouth://start.weixin?%7B%22cmd%22%3A103301%2C%22jsonStr%22%3A%7B%22action%22%3A1%2C%22album_audio_id%22%3A531492577%2C%22album_id%22%3A76245509%2C%22bitrate%22%3A128%2C%22duration%22%3A257%2C%22extname%22%3A%22mp3%22%2C%22filename%22%3A%22%E8%8B%8F%E8%BF%90%E8%8D%A0%20-%20%E5%9C%86%22%2C%22isplay%22%3A1%7D%7D"
-  }
+  },
 
   "3": {
     name: "袁娅维TIA RAY - Soul Food, So Good",
