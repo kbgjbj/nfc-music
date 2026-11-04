@@ -7,57 +7,48 @@
 <style>
   body { font-family: sans-serif; text-align: center; padding: 20px; background: #0f1320; color: #fff; margin: 0; }
   #loading { margin-top: 50px; font-size: 16px; color: #aaa; }
-  
   .view-container { display: none; }
-  
-  /* 安卓视图 */
   #androidView { margin-top: 30px; }
   .play-btn { 
     display: flex; align-items: center; justify-content: center;
     width: 80px; height: 80px; margin: 20px auto; 
     background: #2b95ff; border-radius: 50%; 
     box-shadow: 0 0 20px rgba(43,149,255,0.4);
-    font-size: 30px; color: #fff; text-decoration: none; cursor: pointer;
+    font-size: 30px; color: #fff; text-decoration: none;
   }
-  .tip-text { color: #888; font-size: 13px; margin-bottom: 24px; }
-  .section-title { color: #666; font-size: 13px; margin: 30px 0 14px; }
-
-  /* 平台按钮（iPhone 和安卓共用样式） */
+  .tip-text { color: #888; font-size: 13px; margin-bottom: 10px; }
+  .divider { color: #666; margin: 15px 0; font-size: 13px; }
   .btn { 
     display: flex; align-items: center;
-    width: 85%; margin: 12px auto; padding: 14px 20px; 
+    width: 85%; margin: 10px auto; padding: 14px 20px; 
     border-radius: 12px; color: #fff; text-decoration: none; font-size: 16px; 
     background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
     backdrop-filter: blur(10px); text-align: left;
   }
   .btn-icon { margin-right: 12px; font-size: 20px; }
-  .btn[data-p="qq"]        { border-left: 3px solid #12b7f5; }
-  .btn[data-p="netease"]   { border-left: 3px solid #d33a31; }
-  .btn[data-p="qishi"]     { border-left: 3px solid #ff0055; }
-  .btn[data-p="kugou"]     { border-left: 3px solid #00a0e9; }
-  .btn[data-p="kugouyouth"]{ border-left: 3px solid #ff6600; }
-  .btn[data-p="web"]       { background: rgba(0,0,0,0.2); border: none; justify-content: center; margin-top: 20px;}
-
-  /* iPhone视图 */
-  #iphoneView { margin-top: 20px; }
-  #iphoneView h2 { margin-bottom: 25px; font-size: 18px; font-weight: normal; }
+  #btnQq { border-left: 3px solid #12b7f5; }
+  #btnNetease { border-left: 3px solid #d33a31; }
+  #btnQishi { border-left: 3px solid #ff0055; }
+  #btnKuGou { border-left: 3px solid #00a0e9; }
+  #btnKugouYouth { border-left: 3px solid #ff6600; }
+  #btnWeb { border-left: 3px solid #2b95ff; }
 </style>
 </head>
 <body>
   <div id="loading">加载中...</div>
   
-  <!-- 安卓视图：播放按钮 + 平台选择 -->
+  <!-- 安卓专属视图 -->
   <div id="androidView" class="view-container">
     <div>正在匹配最佳播放源...</div>
-    <a class="play-btn" onclick="retryLaunch()">▶</a>
+    <a href="javascript:retryLaunch();" class="play-btn">▶</a>
     <div class="tip-text">自动匹配中，未跳转可点击上方按钮重试</div>
-    <div class="section-title">— 或手动选择平台 —</div>
+    <div class="divider">— 或手动选择平台 —</div>
     <div id="androidPlatforms"></div>
   </div>
 
-  <!-- iPhone视图：完全不变 -->
+  <!-- iPhone专属视图 -->
   <div id="iphoneView" class="view-container">
-    <h2>请选择音乐平台</h2>
+    <h2 style="margin-bottom: 25px; font-size: 18px; font-weight: normal;">请选择音乐平台</h2>
     <a class="btn" data-p="qq"><span class="btn-icon">🎵</span> QQ音乐</a>
     <a class="btn" data-p="netease"><span class="btn-icon">☁️</span> 网易云音乐</a>
     <a class="btn" data-p="qishi"><span class="btn-icon">🥤</span> 汽水音乐</a>
@@ -69,17 +60,18 @@
 <script src="songs.js"></script>
 <script>
   const params = new URLSearchParams(location.search);
-  const song = SONGS[params.get('s')];
-  const isAndroid = /android/.test(navigator.userAgent.toLowerCase());
+  const songId = params.get('s');
+  const song = SONGS[songId];
+  const ua = navigator.userAgent.toLowerCase();
+  const isAndroid = /android/.test(ua);
 
-  // 平台配置：key 对应 song 对象里的字段
   const PLATFORMS = [
-    { key: 'qq',         icon: '🎵', label: 'QQ音乐',       schemeKey: 'qqScheme',       web: true },
-    { key: 'netease',    icon: '☁️', label: '网易云音乐',   schemeKey: 'neteaseScheme',  web: false },
-    { key: 'qishi',      icon: '🥤', label: '汽水音乐',     schemeKey: 'qishiScheme',    web: false },
-    { key: 'kugou',      icon: '🐶', label: '酷狗音乐',     schemeKey: 'kugouScheme',    web: false },
-    { key: 'kugouyouth', icon: '🎧', label: '酷狗概念版',   schemeKey: 'kugouyouthScheme', web: false },
-    { key: 'web',        icon: '🌐', label: '网页在线播放(QQ)', schemeKey: null,          web: true },
+    { key: 'qq', icon: '🎵', label: 'QQ音乐', schemeKey: 'qqScheme' },
+    { key: 'netease', icon: '☁️', label: '网易云音乐', schemeKey: 'neteaseScheme' },
+    { key: 'qishi', icon: '🥤', label: '汽水音乐', schemeKey: 'qishiScheme' },
+    { key: 'kugou', icon: '🐶', label: '酷狗音乐', schemeKey: 'kugouScheme' },
+    { key: 'kugouyouth', icon: '🎧', label: '酷狗概念版', schemeKey: 'kugouyouthScheme' },
+    { key: 'web', icon: '🌐', label: '网页在线播放(QQ)', schemeKey: null, web: true },
   ];
 
   function go(scheme, webUrl) {
@@ -91,11 +83,13 @@
     container.querySelectorAll('.btn').forEach(btn => {
       const p = PLATFORMS.find(x => x.key === btn.dataset.p);
       if (!p) return;
-      // 没有对应 scheme 的平台按钮不显示
+      
+      // 如果没有对应的 scheme 且不是网页兜底，则隐藏
       if (p.schemeKey && !song[p.schemeKey] && !(p.web && song.qqWeb)) {
         btn.style.display = 'none';
         return;
       }
+      
       btn.onclick = () => {
         if (p.key === 'web') {
           location.href = song.qqWeb || '';
@@ -106,35 +100,32 @@
     });
   }
 
-  if (!song) {
-    document.getElementById('loading').textContent = '歌曲不存在';
+  if (!song) { 
+    document.getElementById("loading").textContent = "歌曲不存在"; 
   } else {
-    document.getElementById('loading').style.display = 'none';
+    document.getElementById("loading").style.display = "none";
 
     if (isAndroid) {
-      // 安卓视图
-      document.getElementById('androidView').style.display = 'block';
-      // 动态生成平台按钮（和 iPhone 同款）
-      const box = document.getElementById('androidPlatforms');
-      box.innerHTML = PLATFORMS.map(p =>
+      document.getElementById("androidView").style.display = "block";
+      // 动态生成安卓按钮（确保只生成一次）
+      const box = document.getElementById("androidPlatforms");
+      box.innerHTML = PLATFORMS.map(p => 
         `<a class="btn" data-p="${p.key}"><span class="btn-icon">${p.icon}</span> ${p.label}</a>`
       ).join('');
       bindPlatform(box);
       autoLaunchAndroid(song);
-
     } else {
-      // iPhone 视图（原样）
-      document.getElementById('iphoneView').style.display = 'block';
-      bindPlatform(document.getElementById('iphoneView'));
+      document.getElementById("iphoneView").style.display = "block";
+      bindPlatform(document.getElementById("iphoneView"));
     }
   }
 
   function retryLaunch() { autoLaunchAndroid(song); }
 
-  // ===== 安卓自动分发队列 =====
+  // 安卓自动分发队列
   function autoLaunchAndroid(song) {
     const steps = [
-      { get: () => song.qqScheme,     fb: () => song.qqWeb },
+      { get: () => song.qqScheme, fb: () => song.qqWeb },
       { get: () => song.neteaseScheme },
       { get: () => song.qishiScheme },
       { get: () => song.kugouScheme },
