@@ -10,12 +10,22 @@ const SONGS = {
   },
 
   "2": {
-    name: "周杰伦 - 晴天",
-    qqScheme: "qqmusic://qq.com/media/playSonglist?p=%7B%22song%22:%5B%7B%22type%22:%220%22,%22songmid%22:%220039MnYb0qxYhV%22%7D%5D,%22action%22:%22play%22%7D",
-    qqWeb: "https://i2.y.qq.com/n3/other/pages/playsong/index.html?songmid=0039MnYb0qxYhV&ADTAG=myqq",
-    neteaseScheme: "orpheus://song/2668397359/?autoplay=1",
-    qishiScheme: "luna://luna.com/playing?track_id=7402972976926672911",
-    kugouScheme: "kugou://start.weixin?%7B%22cmd%22%3A303%2C%22jsonStr%22%3A%7B%22title%22%3A%22%E6%99%B4%E5%A4%A9%22%2C%22url%22%3A%22https%3A%2F%2Fm.kugou.com%2Fshare%2Fsong.html%3Fchain%3D2vByHb1G7V2%22%7D%7D",
-    kugouyouthScheme: "kugouyouth://start.weixin?%7B%22cmd%22%3A103301%2C%22jsonStr%22%3A%7B%22action%22%3A1%2C%22album_audio_id%22%3A32100650%2C%22album_id%22%3A966846%2C%22bitrate%22%3A128%2C%22duration%22%3A269%2C%22extname%22%3A%22mp3%22%2C%22filename%22%3A%22%E5%91%A8%E6%9D%B0%E4%BC%A6%20-%20%E6%99%B4%E5%A4%A9%22%2C%22filesize%22%3A4317292%2C%22hash%22%3A%22B3A52A7A958BF0AED0EBFBA2E9A818B7%22%2C%22isplay%22%3A1%7D%7D"
+    name: "周杰伦 - 你听得到",
+    qqScheme: "qqmusic://qq.com/media/playSonglist?p=%7B%22song%22:%5B%7B%22type%22:%220%22,%22songmid%22:%22002elTc93yuXu2%22%7D%5D,%22action%22:%22play%22%7D",
+    qqWeb: "https://i2.y.qq.com/n3/other/pages/playsong/index.html?songmid=002elTc93yuXu2&ADTAG=myqq",
+    neteaseScheme: "orpheus://song/3396650050/?autoplay=1",
+    qishiScheme: "luna://luna.com/playing?track_id=7679445244916566058",
+    kugouScheme: "kugou://start.weixin?%7B%22cmd%22%3A303%2C%22jsonStr%22%3A%7B%22title%22%3A%22%E4%BD%A0%E5%90%AC%E5%BE%97%E5%88%B0%22%2C%22url%22%3A%22https%3A%2F%2Fm.kugou.com%2Fshare%2Fsong.html%3Fchain%3D2vDMn55G7V2%22%7D%7D",
+    kugouyouthScheme: "kugouyouth://start.weixin?%7B%22cmd%22%3A103301%2C%22jsonStr%22%3A%7B%22action%22%3A1%2C%22album_audio_id%22%3A32100653%2C%22album_id%22%3A966846%2C%22bitrate%22%3A128%2C%22duration%22%3A230%2C%22extname%22%3A%22mp3%22%2C%22filename%22%3A%22%E5%91%A8%E6%9D%B0%E4%BC%A6%20-%20%E4%BD%A0%E5%90%AC%E5%BE%97%E5%88%B0%22%2C%22filesize%22%3A3689103%2C%22hash%22%3A%22D7F42691CB6134BA8AA247F0A1DBD060%22%2C%22isplay%22%3A1%7D%7D"
+  },
+
+  "3": {
+    name: "袁娅维TIA RAY/A-Lin/万妮达Vinida Weng - 惊奇无限假期 A-T-V",
+    qqScheme: "qqmusic://qq.com/media/playSonglist?p=%7B%22song%22:%5B%7B%22type%22:%220%22,%22songmid%22:%22001CwlA43lsQ4Z%22%7D%5D,%22action%22:%22play%22%7D",
+    qqWeb: "https://i2.y.qq.com/n3/other/pages/playsong/index.html?songmid=001CwlA43lsQ4Z&ADTAG=myqq",
+    neteaseScheme: "orpheus://song/1998922131/?autoplay=1",
+    qishiScheme: "luna://luna.com/playing?track_id=7166472916261931010",
+    kugouScheme: "kugou://start.weixin?%7B%22cmd%22%3A303%2C%22jsonStr%22%3A%7B%22title%22%3A%22%E6%83%8A%E5%A5%87%E6%97%A0%E9%99%90%E5%81%87%E6%9C%9F%20A-T-V%22%2C%22url%22%3A%22https%3A%2F%2Fm.kugou.com%2Fshare%2Fsong.html%3Fchain%3D2vFcBc7G7V2%22%7D%7D",
+    kugouyouthScheme: "kugouyouth://start.weixin?%7B%22cmd%22%3A103301%2C%22jsonStr%22%3A%7B%22action%22%3A1%2C%22album_audio_id%22%3A462088478%2C%22album_id%22%3A64340407%2C%22bitrate%22%3A128%2C%22duration%22%3A243%2C%22extname%22%3A%22mp3%22%2C%22filename%22%3A%22%E8%A2%81%E5%A8%85%E7%BB%B4TIA%20RAY%E3%80%81A-Lin%E3%80%81%E4%B8%87%E5%A6%AE%E8%BE%BEVinida%20Weng%20-%20%E6%83%8A%E5%A5%87%E6%97%A0%E9%99%90%E5%81%87%E6%9C%9F%20A-T-V%22%2C%22filesize%22%3A3904802%2C%22hash%22%3A%2230EC0E70A3063128A69957B12D68DE19%22%2C%22isplay%22%3A1%7D%7D"
   }
 };
