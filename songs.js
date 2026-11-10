@@ -10,16 +10,6 @@ const SONGS = {
   },
 
   "2": {
-    name: "周杰伦 - 你听得到",
-    qqScheme: "qqmusic://qq.com/media/playSonglist?p=%7B%22song%22:%5B%7B%22type%22:%220%22,%22songmid%22:%22002elTc93yuXu2%22%7D%5D,%22action%22:%22play%22%7D",
-    qqWeb: "https://i2.y.qq.com/n3/other/pages/playsong/index.html?songmid=002elTc93yuXu2&ADTAG=myqq",
-    neteaseScheme: "orpheus://song/3396650050/?autoplay=1",
-    qishiScheme: "luna://luna.com/playing?track_id=7679445244916566058",
-    kugouScheme: "kugou://start.weixin?%7B%22cmd%22%3A303%2C%22jsonStr%22%3A%7B%22title%22%3A%22%E4%BD%A0%E5%90%AC%E5%BE%97%E5%88%B0%22%2C%22url%22%3A%22https%3A%2F%2Fm.kugou.com%2Fshare%2Fsong.html%3Fchain%3D2vDMn55G7V2%22%7D%7D",
-    kugouyouthScheme: "kugouyouth://start.weixin?%7B%22cmd%22%3A103301%2C%22jsonStr%22%3A%7B%22action%22%3A1%2C%22album_audio_id%22%3A32100653%2C%22album_id%22%3A966846%2C%22bitrate%22%3A128%2C%22duration%22%3A230%2C%22extname%22%3A%22mp3%22%2C%22filename%22%3A%22%E5%91%A8%E6%9D%B0%E4%BC%A6%20-%20%E4%BD%A0%E5%90%AC%E5%BE%97%E5%88%B0%22%2C%22filesize%22%3A3689103%2C%22hash%22%3A%22D7F42691CB6134BA8AA247F0A1DBD060%22%2C%22isplay%22%3A1%7D%7D"
-  },
-
-  "3": {
     name: "袁娅维TIA RAY/A-Lin/万妮达Vinida Weng - 惊奇无限假期 A-T-V",
     qqScheme: "qqmusic://qq.com/media/playSonglist?p=%7B%22song%22:%5B%7B%22type%22:%220%22,%22songmid%22:%22001CwlA43lsQ4Z%22%7D%5D,%22action%22:%22play%22%7D",
     qqWeb: "https://i2.y.qq.com/n3/other/pages/playsong/index.html?songmid=001CwlA43lsQ4Z&ADTAG=myqq",
